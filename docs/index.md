@@ -35,7 +35,7 @@ Fridays 08:30-11:30 AM in Bren 1424, **except**:
 
 ### Assignments
 
-1. [Data_Ingest]
+1. [Data Wrangling](wrangle/asst_wrangle.html)
 2. …stay tuned...
 
 Notify us on [GauchoSpace](https://purl.org/ucsb-bren/ESM262-GS) after you've pushed your assignment to your GitHub repository.

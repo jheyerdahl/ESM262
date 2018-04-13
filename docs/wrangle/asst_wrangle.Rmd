@@ -34,7 +34,7 @@ For this assignment, you'll import, tidy, and analyze the [California gazetteer 
 1. Delete from `gaz` rows where:
     - the **primary** latitude or longitude are unknown
     - the feature is not in California
-1. Write the `gaz` tibble to a CSV files (using `"|"` as a delimiter).
+1. Write the `gaz` tibble to a CSV file (using `"|"` as a delimiter).
 
 ### Analyze
 
