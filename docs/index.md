@@ -23,8 +23,8 @@ Fridays 08:30-11:30 AM in Bren 1424, **except**:
 |meeting|date|instructor|topics|
 |----------|------|----------|----------------------------------------|
 |1|06 Apr|JF|[files & Git](files_git)|
-|2|13 Apr|JF|[data wrangling]|
-|3|20 Apr|JF|[data wrangling (contd')]|
+|2|13 Apr|JF|[data wrangling](wrangle)|
+|3|20 Apr|JF|[data wrangling](wrangle) (contd')|
 ||27 Apr||**no class**|
 |4|04 May|JF|[databases]|
 |5|11 May|NT|[software engineering: functions & modules]|

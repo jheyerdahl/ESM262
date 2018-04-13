@@ -1,0 +1,58 @@
+---
+title: "Assignment - Data Wrangling"
+author: "ESM 262 / Frew"
+date: "Spring 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For this assignment, you'll import, tidy, and analyze the [California gazetteer dataset](https://geonames.usgs.gov/docs/stategaz/CA_Features_20180401.zip) that we used as an example in the [Data Wrangling](https://ucsb-bren.github.io/esm262/wrangle/) course sessions.
+
+(The gazetteer data format is documented in ["File Format for States, Territories, and Associated Areas of the United States"](https://geonames.usgs.gov/domestic/states_fileformat.htm).)
+
+### Import and Tidy
+
+1. Read the gazetteer data as-is (all columns; no type conversion) into a `gaz_raw` tibble.
+1. Copy only the following columns into a `gaz` tibble (you can rename them if you like):
+    - feature ID
+    - feature name
+    - feature class
+    - state alpha
+    - county name
+    - primary latitude (decimal)
+    - primary longitude (decimal)
+    - source latitude (decimal)
+    - source longitude (decimal)
+    - elevation in meters
+    - map name
+    - date created
+    - date edited
+1. Convert the `gaz` columns to the appropriate type. Convert any placeholders for unknown data to `NA`
+1. Delete from `gaz` rows where:
+    - the **primary** latitude or longitude are unknown
+    - the feature is not in California
+1. Write the `gaz` tibble to a CSV files (using `"|"` as a delimiter).
+
+### Analyze
+
+Create R code snippets that answer the following questions about California:
+
+1. What is the most-frequently-occuring feature name?
+1. What is the least-frequently-occuring feature class?
+1. What is the approximate center point of each county?
+    - Hint: Calculate the center of the bounding box of the county's **point** features.
+1. What are the fractions of the total number of features in each county that are natural? man-made?
+    - Hint: Construct a tibble with two columns, one containing all possible feature classes (see "[Feature Class Definitions](https://geonames.usgs.gov/apex/f?p=gnispq:8)"), and another containing the string "natural" or "man-made", which you assign (it's pretty obvious.) Then join this tibble to the gazetteer tibble.
+1. ~~What is the air-speed velocity of an unladen swallow?~~ (never mind...)
+
+### Submit your work
+
+1. Assemble your R code and documentation into a single [R Markdown](http://rmarkdown.rstudio.com) document
+2. Push the document and any associated data files to your GitHub repository.
+3. Tell us you're done by submitting a notice to [GauchoSpace](https://purl.org/ucsb-bren/ESM262-GS).
+
+Enjoy!  
+/Frew & Naomi

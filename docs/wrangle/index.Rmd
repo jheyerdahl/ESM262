@@ -1,0 +1,48 @@
+---
+title: "Data Wrangling"
+author: "ESM 262 / Frew"
+date: "Spring 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](herding_cats.jpg)
+
+[see the movie!](https://www.youtube.com/embed/m_MaJDK3VNE)
+
+### Introduction
+
+The next two course sessions will be drawn from the new online book "[R for Data Science](http://r4ds.had.co.nz/)" (aka "r4ds"), by Garret Grolemund and Hadley Wickham.
+
+[Hadley Wickham](http://hadley.nz/) is a legend in the R community. He's the primary developer of `ggplot2`, `tidyr`, `dplyr`, and a slug of other R packages that are collectively known (and installable) as the **tidyverse**. These packages enable a style of scientific programming that's (usually) much more readable and easier to learn than "standard" R.
+
+### Data wrangling part 1 --- importing and tidying
+
+- [1.4.3 The tidyverse](http://r4ds.had.co.nz/introduction.html#the-tidyverse)
+    - Don't worry if you get a
+```
+cannot open URL 'https://.../PACKAGES.rds'
+```
+    message from `install.packages`. Go ahead and try
+```
+library(tidyverse)
+```
+    ---it will probably work.
+- [8 Workflow: projects](http://r4ds.had.co.nz/workflow-projects.html)
+- [9 Introduction to data wrangling](http://r4ds.had.co.nz/wrangle-intro.html)
+- [10.2 Creating tibbles](http://r4ds.had.co.nz/tibbles.html#tibbles)
+- [10.3.2 Subsetting tibbles](http://r4ds.had.co.nz/tibbles.html#subsetting)
+- [11 Data import](http://r4ds.had.co.nz/data-import.html)
+    - sample data
+        - [`heights.csv`](https://raw.githubusercontent.com/hadley/r4ds/master/data/heights.csv)
+        - [California gazetteer](https://geonames.usgs.gov/docs/stategaz/CA_Features_20180401.zip)
+            - [format](https://geonames.usgs.gov/domestic/states_fileformat.htm)
+
+### Data wrangling, part 2 --- transforming and relating
+
+- [12 Tidy data](http://r4ds.had.co.nz/tidy-data.html)
+- [5 Data Transformation](http://r4ds.had.co.nz/transform.html)
+- [13 Relational data](http://r4ds.had.co.nz/relational-data.html)
