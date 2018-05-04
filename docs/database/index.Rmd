@@ -1,0 +1,46 @@
+---
+title: "Databases"
+author: "ESM 262 / Frew"
+date: "Spring 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](we_like_databases.png)
+
+### Introduction
+
+In this lab we'll explore how to use a *relational database* to store and retrieve tabular data. We'll use the [SQLite](https://www.sqlite.org/index.html) software, which manages a complete multi-table relational database as a single Mac or Windows file. (In fact, SQLite database files are *portable*: an SQLite database created on a Mac can be copied to and used on Windows, and vice versa.)
+
+### Software setup
+
+- **Mac:** You should already have SQLite installed.
+
+- **Windows:**
+    1. On the [SQLite Download Page](https://www.sqlite.org/download.html), download the "bundle of command-line tools" in the "Precompiled Binaries for Windows" section.
+    2. Unzip the bundle in your `Downloads` folder.
+    3. Right-click *Git Bash Here* in the `sqlite-tools-win32-x86-3230100` folder (the numbers at the end of the folder name may be different).
+    4. Enter the command `cp sqlite3.exe $HOME`
+
+Test your setup by opening a Terminal window in RStudio and entering the command `sqlite3`. You should see:
+
+```
+SQLite version (version number, date, and time)
+Enter ".help" for usage hints.
+Connected to a transient in-memory database.
+Use ".open FILENAME" to reopen on a persistent database.
+sqlite>
+```
+
+Enter the command `.q` to exit SQLite.
+
+### Tutorials
+
+- [Software Carpentry tutorial: Databases and SQL](https://swcarpentry.github.io/sql-novice-survey/)
+    - We'll work through pretty much the whole thing (some parts faster than others... and we'll skip the Python stuff)
+    
+- [Introduction to `dbplyr`](http://dbplyr.tidyverse.org/articles/dbplyr.html)
+    - We'll explore how databases are connected to the tidyverse packages (`dplyr`, `tibble`, etc.)
