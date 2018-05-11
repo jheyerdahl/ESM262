@@ -7,6 +7,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ## Lecture notes for today
@@ -63,8 +64,9 @@ plot(catch1, col="blue", main=plottitle)
 
 ```
 
-## Lists
-You can return lists from functions
+##  Functions with factors
+You can return factors from functions
+But lists might be better..
 
 ```{r diversitylist, echo=FALSE}
 
@@ -85,32 +87,54 @@ catch2 = as.factor(c(rep("salmon", times=6), rep("cod",times=4)))
 compute_simpson_index(catch1)
 compute_simpson_index(catch2)
 
+
+# repeat with a list
+source("computediversity.R")
+computediversity(catch1)
+computediversity(catch2)
 ```
 We can also use for loops to run a function multiple times
 
 ```{r npvfor, echo=FALSE}
-library(tidyverse)
+
+# get function
 source("compute_NPV.R")
+compute_NPV(20, discount=0.01, time=20)
+
+
+#generate some input
 damages = c(25,33,91,24)
-discount.rates = seq(from=0.01, to=0.04, by=0.005)
+# sensitivity to discount rate
+discount_rates = seq(from=0.01, to=0.04, by=0.005)
 yr=10
-npvs = as.data.frame(matrix(nrow=length(damages), ncol=length(discount.rates)))
+
+# compute some npv's for different discount rates
+# first generate a dataframe to store results
+npvs = as.data.frame(matrix(nrow=length(damages), ncol=length(discount_rates)))
+
+# now use a for loop to populate
  for (i in 1:length(damages)) {
          for (j in 1:length(discount.rates)) {
-       npvs[i,j]= compute_NPV(value=damages[i],       discount=discount.rates[j],time=yr )
+       npvs[i,j]= compute_NPV(value=damages[i],       discount=discount_rates[j],time=yr )
 
          }
  }
  npvs
  
+ 
+ #some data wrangling
 colnames(npvs)=discount.rates
 rownames(npvs)=damages
  npvs
  
- library(tidyr)
+
  npvs = gather(npvs, 1:7, key=dis, value=npv)
  head(npvs)
  ggplot(npvs, aes(x=npv, col=as.factor(dis)))+geom_density(size=2)+scale_color_brewer(type="seq", name="Discount")
+ 
+ # how about summing all the damages
+ npv.total =npvs %>% group_by(dis) %>% summarize(t=sum(npv))
+ ggplot(npv.total, aes(dis,t, fill=dis))+geom_col() + labs(x="Discount Rate", y="Total ($)")
 
  source("compute_yield_NPV.R")
  # use functions inside a function
@@ -119,7 +143,7 @@ rownames(npvs)=damages
  compute_yield_NPV(T, P, ts=0.5, tp=0.5, intercept=200, irr="N", discount=0.02, price=2)
  
 ```
-Using 
+ 
 ```{r str, echo=FALSE}
 
 source("compute_season_meanflow.R")
