@@ -114,7 +114,7 @@ npvs = as.data.frame(matrix(nrow=length(damages), ncol=length(discount_rates)))
 
 # now use a for loop to populate
  for (i in 1:length(damages)) {
-         for (j in 1:length(discount.rates)) {
+         for (j in 1:length(discount_rates)) {
        npvs[i,j]= compute_NPV(value=damages[i],       discount=discount_rates[j],time=yr )
 
          }
@@ -123,7 +123,7 @@ npvs = as.data.frame(matrix(nrow=length(damages), ncol=length(discount_rates)))
  
  
  #some data wrangling
-colnames(npvs)=discount.rates
+colnames(npvs)=discount_rates
 rownames(npvs)=damages
  npvs
  
