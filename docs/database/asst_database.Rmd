@@ -1,0 +1,41 @@
+---
+title: "Assignment - Database"
+author: "ESM 262 / Frew"
+date: "Spring 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+For this assignment, you'll repeat the analyses from the [Data Wrangling assignment](https://purl.org/ucsb-bren/ESM262/wrangle/asst_wrangle.html), but using SQL queries instead of `dplyr` functions.
+
+The easiest way to do this is to start with a copy of your solution to the [Data Wrangling assignment](https://purl.org/ucsb-bren/ESM262/wrangle/asst_wrangle.html), and then modify it as follows.
+
+### Create database
+
+**Replace** step 5 ("Write the `gaz` tibble to a CSV file ...") with:
+
+1. Create a connection to a new `gaz.db` SQLite database.
+1. Copy the `gaz` tibble into the `gaz.db` database.
+
+### Analyze
+
+Using SQL queries and the `dbGetQuery` function, create R code snippets that answer the following questions about California:
+
+1. What is the most-frequently-occuring feature name?
+1. What is the least-frequently-occuring feature class?
+1. What is the approximate center point of each county?
+1. What are the fractions of the total number of features in each county that are natural? man-made?
+    - Hint: Copy the feature class categories tibble you created into the `gaz.db` database. Then you can `JOIN` it to the the gaz table.
+1. ~~What is the capital of Assyria?~~ (never mind...)
+
+### Submit your work
+
+1. Assemble your R code and documentation into a single [R Markdown](http://rmarkdown.rstudio.com) document
+2. Push the document and any associated data files to your GitHub repository.
+3. Tell us you're done by submitting a notice to [GauchoSpace](https://purl.org/ucsb-bren/ESM262-GS).
+
+Enjoy!  
+/Frew & Naomi
