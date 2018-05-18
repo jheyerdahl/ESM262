@@ -1,0 +1,522 @@
+---
+title: "Functions, part 2"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+##  <span style="color:blue"> A bit more on Looping <\span>
+
+Loops can be "nested" on loop in side the other
+
+Exampe: Calculate NPV or a range of different interest rates and a range of damages that may be incurred 10 years in the future
+
+Steps
+
+* define inputs (interest rates, damages)
+* define output (NPV)
+* write the function
+* create a data structure to store results where we vary both interest rates and damages
+* use nest for loops to fill in the data structure
+
+```{r npvfor, echo=FALSE}
+
+# write a function to compute npv
+source("compute_NPV.R")
+compute_NPV(20, discount=0.01, time=20)
+
+
+#generate some input
+damages = c(25,33,91,24)
+# sensitivity to discount rate
+discount_rates = seq(from=0.01, to=0.04, by=0.005)
+yr=10
+
+# compute some npv's for different discount rates
+# first generate a dataframe to store results
+npvs = as.data.frame(matrix(nrow=length(damages), ncol=length(discount_rates)))
+
+# now use a for loop to populate
+ for (i in 1:length(damages)) {
+         for (j in 1:length(discount_rates)) {
+       npvs[i,j]= compute_NPV(value=damages[i],       discount=discount_rates[j],time=yr )
+
+         }
+ }
+ npvs
+ 
+ 
+ #some data wrangling
+colnames(npvs)=discount_rates
+rownames(npvs)=damages
+ npvs
+ 
+
+ npvs = gather(npvs, 1:7, key=dis, value=npv)
+ head(npvs)
+ ggplot(npvs, aes(x=npv, col=as.factor(dis)))+geom_density(size=2)+scale_color_brewer(type="seq", name="Discount")
+ 
+ # how about summing all the damages
+ npv.total =npvs %>% group_by(dis) %>% summarize(t=sum(npv))
+ ggplot(npv.total, aes(dis,t, fill=dis))+geom_col() + labs(x="Discount Rate", y="Total ($)")
+
+ 
+```
+
+Some other types of loops
+
+* while
+  useful for repeating until a condition is met
+
+Example
+if a metal toxin in a lake increases by 1% per year, how many years will it take for the metal level to be greater than 30 units, if toxin is current at 5 units
+
+
+```{r} 
+
+# accumulate pollutant until a threshold - how many years does it take
+
+# initial conditions
+yr=1
+pollutant_level = 5
+
+# loop
+while (pollutant_level < 30)   {
+  # increase pollutant
+pollutant_level = pollutant_level - 0.01* pollutant_level 
+# keep track of time
+yr = yr + 1
+}
+
+pollutant_level
+yr
+
+# while loop dangers
+
+```
+
+## <span style="color:blue"> Data types </span>
+
+All programing languages use data-types, or structures to hold information
+
+* integer
+* floating point/ real / numeric
+* character 
+* string
+
+Often data types are multi-dimensional 
+Some useful ones in R
+
+* vector
+* matrix
+* data frame
+* tibble
+* factors
+* lists
+
+Programming often involves selecting and building data structures. Like the **res** matrix we built last class to hold the results from our **for** loop
+
+Good data structures are
+
+* as simple as possible
+* easy to understand (readable names)
+* easy to manipulate 
+* easy to visualize
+
+# <span style="color:blue">
+
+# Factors <\span>
+
+something that has different **classes** or **groups**
+useful for doing calculations with categories
+
+Here's an example:
+
+First lets look at a standard numeric vector
+
+```{r} 
+a = c(1.3, 1, 4, 1.3, 22)
+# compute the mean
+mean(a)
+```
+
+What if **a** is a factor
+
+What do commands like **mean** do
+```{r} 
+a = as.factor(a)
+# compute the mean
+mean(a)
+
+#why? lets look
+a
+
+
+
+
+```
+
+We can use **summary** with factors to get frequencies in each category (or “level” )
+
+
+
+```{r fishes}
+
+# create vector of possible fish 
+possible.fish = c("salmon","steelhead","shark","tuna","cod")
+
+# we can use sample to simulate a random recording of catch by fisherman, lets say we pick 20 fish from the net
+
+catch1 = sample(possible.fish, size=20, replace=T)
+# because possible.fish was a factor catch1 will be a factor
+catch1
+
+summary(catch1)
+# if we want summary to be more useful - make this a factor
+catch1 = as.factor(catch1)
+
+
+# to quickly get frequencies of different fish and to plot 
+summary(catch1)
+plot(catch1, col="blue")
+
+
+# we can also use summary to explore and return information about the distribution
+# mean frequency of a particular type of fish
+mean(summary(catch1))
+
+# maximum frequency
+max(summary(catch1))
+
+# which fish was most frequently caught
+which.max(summary(catch1))
+
+#to get just the name 
+names(which.max(summary(catch1)))
+
+# use results for creating text
+# sprintf creates a string %s mean use what ever is after the , to fill in a string
+plottitle=sprintf("We like %s", names(which.max(summary(catch1))))
+
+plot(catch1, col="blue", main=plottitle)
+
+# you can also add numbers to the string
+plottitle=sprintf("We mostly caught %s \n max catch(%d)", names(which.max(summary(catch1))), max(summary(catch1)))
+plot(catch1, col="blue", main=plottitle)
+
+#How do you figure out the rarest fish in our simulated ocean
+
+# bigger challenge how would use pre-assign probabilities to different fish and then generate your ocean, hint look at help page for sample
+```
+
+# Aside **sprintf**
+
+some useful syntax if you want to generate strings
+
+* **%s** replace with a string
+* **%d** replace with an integer value
+* **%f** replace with a real value
+* **%4.1f** replace with a real value with 4 digist, two after decimal
+* **\n** add a line return
+
+
+##  <span style="color:blue"> Functions with factors <\span>
+
+Lets generate a function that makes use of categorical data
+species diversity is a good example
+
+"Simpson's Index (D) measures the probability that two individuals randomly selected from a sample will belong to the same species ""
+Value is between 0 and 1, with lower values associated with *lower* diversity
+
+See 
+[Simpson Biodiversity](http://www.countrysideinfo.co.uk/simpsons.htm)
+
+
+```{r diversity, echo=TRUE}
+
+source("compute_simpson_index.R")
+compute_simpson_index
+
+
+possible.fish = as.factor(c("salmon","steelhead","shark","tuna","cod"))
+# simulate a random recording of catch by fisherman
+
+
+# note here is answer to above challenge
+catch1 = sample(possible.fish, size=10, prob = c(0.2, 0.2, 0.1, 0.1, 0.4), replace=T)
+# lets create a test case that should have low diversity, by repeating the same thing
+catch2 = c(rep("salmon", times=10), rep("cod", times=10))
+
+compute_simpson_index(catch1)
+compute_simpson_index(catch2)
+
+```
+
+What would be a useful error check here!
+
+Repeat for the alternative Simpson Diversity Index
+Test on the **fish.txt** 
+
+Divide by zero - one of the most common errors! 
+
+Sometimes you don't want factors and R thinks something should be
+How to change back? **as.numeric** makes sense ...but
+
+
+
+```{r, echo=TRUE}
+
+a = as.factor(c(1.3, 1, 4, 1.3, 22))
+#sum(a)
+
+# try to make a numeric version from the factor
+b = as.numeric(a)
+sum(b)
+b
+
+# better
+b = as.character(a)
+b = as.numeric(b)
+b
+sum(b)
+```
+
+##  <span style="color:blue"> Returning multiple things from a function < \span >
+
+In R, to do this we use LISTS
+
+* Lists are the most “informal” data structures in R
+* List are really useful for keeping track of and organizing groups of things that are not all the same
+* A list could be a table where number of rows is different for each column
+* A list can have numeric, character, factors all mixed together
+* List are often used for returning more complex information from function (e.g. lm)
+
+```{r introlist, echo=TRUE}
+
+# make a list
+sale = list(id=2, quality="high", contents=c("apple","cherry"), cost=c(4,5))
+sale
+
+#ways to access elements
+sale$id
+sale$what
+
+# you can also access by list item number
+# the [x] denotes the xth item in the list
+sale[[3]]
+sale[["contents"]]
+
+
+# how do you get the second element in the vector that has the contents
+# there are two ways
+
+
+# add to a list
+sale$location = "Farmers market"
+sale
+# or remove
+sale$location = NULL
+sale
+
+# some tricky things
+# correct accessing items in list
+sale$cost
+sale[[4]]
+
+# works but
+#sale[4]
+
+
+sum(sale$cost)
+sum(sale[[4]])
+#sum(sale[4])
+
+# make this a bit more complicated
+# and create a market list - you have sales in each market 
+
+# first describe the markets, what is sold there and usual price
+# we will use these as parameters to simulate a day at the market
+nmarkets=2
+possible_fruit = list(c("cherry","apple", "banana","peach"), c("blueberry","cherry","plum"))
+average_price= list( c(12,2,1,5), c(10,11,4))
+
+market_parameters = list(possible_fruit=possible_fruit, average_price=average_price)
+
+
+# create a list that will be our simulated markets
+market_sim=list()
+
+# total number of possible sales
+maxsales = 4
+
+for (i in 1:nmarkets) {
+      # for each market we have possible fruit and their prices, 
+      
+      available_fruit = market_parameters[["possible_fruit"]][[i]]
+      fruit = length(available_fruit)
+      base_price = market_parameters[["average_price"]][[i]]
+      # simulate n sales on that day
+      nsale = sample(c(1:maxsales),1)
+     
+      
+      # create an empty list to store result from each sale
+      sale=list()
+     for(j in 1:nsale) {
+       
+            # each sale has n types of fruit (simulated)
+            ntype=sample(c(1:nfruit),1)
+            # which fruit (simulated)
+            purchase = sample(c(1:length(available_fruit)),ntype)
+            kind = available_fruit[purchase]
+            
+            # how many of each fruit (simulated)
+            number = sample(c(1:5),ntype)
+            
+            # the unit cost is the normal cost with some variation
+            unitcost = rnorm(mean=1,sd=0.05,n=ntype)*base_price[purchase]
+            
+            # add this sale to the list of sales for that market
+            sale[[j]] =list(saleid=j, kind=kind, number=number, unitcost=unitcost)
+     }
+      
+      # repeat for each market
+  market_sim[[i]]=sale
+}
+
+
+# look at results
+market_sim[[1]]
+market_sim[[2]]
+
+# see the structure of a list
+str(market)
+
+# number of sales in market 1
+length(market_sim[[1]])
+
+# 2nd sale in the first market
+market_sim[[1]][[2]]
+
+# lapply with a function is useful for extracting one particular element
+# get all the fruit sold in the first market
+lapply(market_sim[[1]], function(l) l[["kind"]])
+# or
+lapply(market_sim[[2]], "[[","kind")
+
+
+# unlist can help extract information
+costperitem = unlist(lapply(market_sim[[1]], function(l) l[["unitcost"]]))
+nitems = unlist(lapply(market_sim[[1]], function(l) l[["number"]]))
+revenue_bysale = costperitem*nitems
+sum(revenue_bysale)
+
+# alternatively
+revenue_bysale=(lapply(market_sim[[1]], function(l)  l[["number"]]*l[["unitcost"]]))
+revenue_by_sale
+sum(unlist(revenue_bysale))
+
+# or even
+revenue_by_sale= lapply(market_sim[[1]], function(l)  sum(l[["number"]]*l[["unitcost"]]))
+revenue_by_sale
+sum(unlist(revenue_by_sale))
+
+
+```
+
+So why use these complex data types?
+
+R functions return *lists* and useful when you don't know how many rows you will need in a data frame or matrix
+
+consider *lm*
+
+
+```{r lmlist, echo=TRUE}
+
+# read in some streamflow data
+sage = read.table("sagedata.txt", header=T)
+names(sage)
+
+# sum to water year
+sage_wy = str %>% group_by(wy) %>% summarize(tavg=mean(tavg), precip=sum(precip), trans=sum(trans), psn=sum(psn))
+
+# regress photosynthesis (psn) against precip
+res = lm(psn~precip+wy, data=sage_wy)
+summary(res)
+
+#lm returns a list so we can look at the different elements
+str(res)
+res$coefficients
+res[["coefficients"]]
+res[["call"]]
+
+
+
+```
+
+We can use *lists* to return multiple,diverse pieces of information from our functions
+Lets start with diversity - many be want to know a bit more about the dataset
+
+* Simpson diversity
+* most frequent species
+* number of distinct species
+
+
+
+```{r diversitylist, echo=TRUE}
+
+# repeat with a list
+source("computediversity.R")
+
+computediversity
+
+computediversity(catch1)
+computediversity(catch2)
+```
+
+A: Try adding to your diversity function: return the rarest species; 
+
+
+B: Return two different simpson diversity equations
+
+Note that modularity means that you should try to keep 'chunks' or pieces of code that you might re-use in separate files
+Write two functions - for different simpson metrics
+
+Then a separate functions where user decides which to use
+
+```{r twofunct, echo=FALSE}
+source("compute_simpson_index.R")
+source("compute_simpson_indexB.R")
+
+
+```
+
+##  <span style="color:green"> Assignment < \span >
+
+Work in pairs
+
+Write a function that takes as input
+
+*a table that has prices for different fish
+* a table that has the number caught for each fish
+species for each location
+* each location is in a different column
+* each fish is in a different row 
+
+Function output will be
+
+* most frequently caught fish in each location
+* total revenue for each location
+* total fisheries revenue sum
+
+* if user requests it graph of revenue by location and total revenue (as text)
+
+
+Place your function in an *.R file
+
+Generate some example data for your function; and show how this is created and used in an R markdown document
+Submit as usual as a git link on gauchospace
