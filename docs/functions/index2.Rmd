@@ -1,8 +1,8 @@
 ---
 title: "Functions, part 2"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -88,7 +88,7 @@ pollutant_level = 5
 # loop
 while (pollutant_level < 30)   {
   # increase pollutant
-pollutant_level = pollutant_level - 0.01* pollutant_level 
+pollutant_level = pollutant_level + 0.01* pollutant_level 
 # keep track of time
 yr = yr + 1
 }
@@ -366,6 +366,7 @@ for (i in 1:nmarkets) {
       
       # create an empty list to store result from each sale
       sale=list()
+      nfruit=4
      for(j in 1:nsale) {
        
             # each sale has n types of fruit (simulated)
