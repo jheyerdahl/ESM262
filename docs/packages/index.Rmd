@@ -1,0 +1,396 @@
+---
+title: "Packages, Documentation and Testing"
+author: "Naomi Tague"
+date: "May 25, 2017"
+output: html_document
+---
+
+```{r setup, echo=FALSE, eval=FALSE}
+#make sure you have libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
+library(lubridate)
+library(testthat)
+library(devtools)
+library(roxygen2)
+```
+
+# <span style="color:orange">Definitions</span>
+
+* **Package**: An extension of the R base system with code, data and documentation in standardized
+format.
+* **Library**: A directory containing installed packages.
+* **Repository**: A website providing packages for installation.
+* **Source**: The original version of a package with human-readable text and code.
+* **Binary**: A compiled version of a package with computer-readable text and code, may work only
+on a specic platform.
+* **Base packages**: Part of the R source tree, maintained by R Core.
+* **Recommended packages**: Part of every R installation, but not necessarily maintained by R
+Core.
+* **Contributed packages**: All the rest. This does not mean that these packages are necessarily of
+lesser quality than the above, e.g., many contributed packages on CRAN are written and
+maintained by R Core members. They simply try to keep the base distribution as lean as
+possible.
+* **User packages**: Packages that you write, share with a smaller community - not downloadable
+from CRAN, but can be downloaded (or sent as a zip file) and loaded into R
+
+# <span style="color:orange">Why make packages</span>
+
+* to easily share functions and data with others with R-specific documentation
+* have a set of tools (functions) that you often use, that can be easily loaded
+* be part of the R community
+
+
+#  <span style="color:orange">Installing User Packages</span>
+* looks similar to CRAN packages
+* uncompiled (they can be compiled but not always) so  you can **see** the code
+* you can load my package *esm237examples* by 
+  * downloading *esm237examples_1.0.tar.gz *
+  * install from a *package archive*
+  * *library(esm237examples)*
+  * to make sure it works, 
+    *  *help(compute_NPV)*
+    *  *spring.summary* 
+      * note that this shows you the code used to implement spring.summary
+
+
+
+# <span style="color:orange">Making your own packages</span>
+
+First lets review the format for writing functions
+
+* documentation (we will say more on this later)
+
+* function definition
+
+* named **something.R**
+
+* dont' have ANYTHING else in your **something.R** file
+
+* to see an example look at spring.summary.R on github`
+
+## Steps for starting a package
+
+* Think of a name for your package, it should be descriptive of the many related functions that you will store there
+      * mine will be **esm237examples**
+* Start a new project, using the same name for the project as your package name
+    * choose the option in package creation to ** create a package **
+* If you already have an R function you can add it here
+  * make sure your function is named **something.R** and follows the format for functions that we have been using 
+* Install libraries **devtools** and **roxygen2** from CRAN
+
+
+You will notice that this creates a directory structure that looks something like this
+
+R Package Directory ![](Rdirstruct.jpeg)
+
+You R function will be stored in the **R** subdirectory
+IF **man** and **data**, **tests** subdirectories are not created - created them
+
+This package (e.g **esm237examples**)  directory structures  store your code and documentation; that is easy for R to read. It include
+
+* A file DESCRIPTION with descriptions of the package, author, and license conditions
+* A man/ subdirectory of documentation files.
+* An R/ subdirectory of R code.
+* A data/ subdirectory of datasets.
+
+Inclass Exercise: Make a change to your R function, save it, then re-installusing either menu:
+  * *Build* - *Load All*
+  * *load_all()* command from command line
+
+This will Load your functions in your package that is under-development
+
+
+It is useful to keep an Rmarkdown file or R script that lets you run your function - this should be stored *outside* of the package directory
+
+Here's an example
+
+
+
+```{r code for spring.summary.R, echo=FALSE}
+
+
+#' Summary information about spring climate
+#'
+#' computes summary information about spring temperature and precipitation
+#' @param clim.data  data frame with columns tmax, tmin (C)
+#'	rain (precip in mm), year, month (integer), day
+#' @param months (as integer) to include in spring; default 4,5,6
+#' @return returns a list containing, mean spring temperature (mean.springT, (C))
+#' year with lowest spring temperature (coldest.spring (year))
+#' mean spring precipitation (mean.springP (mm))
+#' spring (as year) with highest precip (wettest.spring (year))
+
+
+spring.summary = function(clim.data, spring.months = c(4:6), springout=FALSE) {
+  
+  spring = subset(clim.data, clim.data$month %in% spring.months)
+  springT = (spring$tmax+spring$tmin)/2.0
+  all.springT = aggregate(springT, by =list(spring$year), mean)
+  mean.springT = mean(c(spring$tmax, spring$tmin))
+  lowyear = spring$year[which.min(spring$tmin)]
+  spring.precip = as.data.frame(matrix(nrow=unique(spring$year), ncol=2))
+  colnames(spring.precip)=c("precip","year")
+  
+  spring.precip = aggregate(spring$rain, by=list(spring$year), sum)
+  
+  
+  colnames(spring.precip) = c("year","precip")  
+  mean.spring.precip = mean(spring.precip$precip)
+  wettest.spring = spring.precip$year[which.max(spring.precip$precip)]
+  
+  if (springout)
+  return(list(mean.springT = mean.springT, coldest.spring=lowyear, 
+              mean.springP=mean.spring.precip,wettest.spring=wettest.spring, 
+			all.springP = spring.precip, all.springT = all.springT ))
+  else
+    return(list(mean.springT = mean.springT, coldest.spring=lowyear, 
+                mean.springP=mean.spring.precip,wettest.spring=wettest.spring ))
+    
+}
+```
+
+Use of spring.summary
+```{r packageapp, eval=FALSE}
+
+
+# load "stuff" in your package including R
+load_all()
+#read in data
+clim=read.table("clim.txt", header=T)
+
+# run a function in the package
+result = spring.summary(clim)
+result
+
+# notice
+help(spring.summary)
+
+```
+# <span style="color:orange">Documentation</span>
+
+ 
+* There is also a standard format for documentation that can be read by automatic programs (roxygen2) - an R package that generate “standard” R documentation - manual or help pages
+
+* These automated approaches for building documentation (like roxygen2) and meta data (descriptions of data sets) are increasingly common - so you should get into the practice of being structured in your approach to documentation
+
+* We will use the conventions that work with roxygen2 - and then use this program to generate formal R documentation. Roxygen is similar to Doxygen which is used for C code…so its a widely used format
+
+Documentation is placed at the top of the *something.R* file
+all lines start with *\#\'*
+
+Here's an example
+
+Documentation example ![](doc.exam.jpeg)
+
+##Three Parts to R documentation
+* **Description** - summary of what your model/function does
+* **Tagged (using special “key” words)**
+
+Here are some examples there are many others
+
+* *\@param*  inputs/parameter description
+* *\@return* what your function returns (outputs)
+* *\@example*  how to use it
+* *\@references*  citations or urls
+* *\@author* YOU
+
+(you don’t need all of these and there are more tags, but start with at least param and return, example is a good idea
+
+* **Within function** Any use of # within the body of the function (this does not get used in the Help)
+
+## Creating Help pages
+
+If you use this approach then *roxygen* can generate help pages  - here are the steps
+
+* Add the documentation information as described above to your function
+
+* Save your function, make sure that it is in the  *R\/* subdirectory your project directory
+eg *esm237examples\/R\/test.R*
+
+* Set your working directory to your project directory
+
+* Make sure you've run *library(roxygen2)*
+
+* Run *document* from Rstudio drop down menu or *document()* from command line  - this will create documentation for ANY of the *.R files you have in the R directory (you can have many of them)
+
+* try  *help(test.R)* to see the results
+
+* you don't have to re-run document the next time your run R,  to load (used when you have project and are developing your new package), if it is another package this will be part of the install
+
+* if you change one of your R functons or the documentation, you need to build and re-load
+
+* try adding another small function - something simple with documentation
+
+# <span style="color:orange">Adding Data to your package</span>
+
+## Accessing existing data stored with packages
+
+To access a dataset that has been stored with a package
+
+**data(name)**
+
+There are numerous data sets stored with the base R package
+try 
+`data(CO2)'
+`help(CO2)'
+
+This is a data set on carbon dioxide uptake in plants - note that it always has help documentation that is similar to functions
+
+
+You can then refer to that dataset as an object in your workspace
+
+## Storing your own data
+
+*have the dataset (e.g clim) in your workspace
+
+* set working directory to one level above your package directory
+
+* save the data to the data subdirectory of your package using:
+  * use_data(name, pkg="packagename")
+  * eg. *use_data(clim, pkg=esm237examples)*
+
+* dataset will be stored as data/name.rda in your package
+
+```{r storing data, echo=FALSE, eval=FALSE}
+
+clim=read.table("clim.txt", header=T)
+use_data(clim, pkg="esm237examples")
+data(clim)
+```
+
+## Documenting Data sets for Packages
+
+Here's an example 
+
+Data Documentation example ![](datadoc.jpeg)
+
+### Steps for documenting data sets
+
+* store documentation as a file (dataname.R) 
+ (e.g **R/clim.R**)
+save that file in the R subdirectory of your package
+
+* this file will contain ONLY the documentation for the data set
+
+* when you rebuild or run document - documentation will be created with roxygen2
+
+* format is similar to documentation for function but you will use some different identifiers for documentation including:
+    * title
+    * descripition
+    * \@format
+    * \@source
+    * \\itemize - itemize allows you to describe the data (see example above)
+
+  * end the file with the name of your dataset (in data directory) in quotes
+  
+  * once you've generated the documentation - run *document(dataname)* and try *help(dataname)* to test
+  
+Generate some data and store it with your package
+
+
+# <span style="color:orange">Giving the package to others</span>
+
+When you work on the defining the package you use the project of the same name
+To give the package to others - (who will simply be using it)
+
+* build a source package (see build directory)
+
+* this will create an *.gz file that you can distribute
+
+* the user will then **install** this package in order to have access to functions and data in your package
+
+# <span style="color:orange">Testing</span>
+
+Top 12 Reasons to Write Unit Tests - Burke and Coyner (Java programmers)
+
+http://www.onjava.com/pub/a/onjava/2003/04/02/javaxpckbk.html
+
+* Tests reduce bugs in new features
+* Tests reduce bugs in existing features
+* Tests defend agains other programmers
+* Testing forces you to slow down and think
+* Testing makes development faster
+* Tests reduce fear
+
+Model developers now often use software to help them automate the testing process
+Re-uses tests - makes it efficient to repeat many tests as you develop and modify the code 
+
+Particularly helpful when you have multiple modules (as in our mangrove example)
+
+This type of software is available for R, Python, C etc.
+
+In R, *testthat* library 
+install and add this library
+
+If you are in the working directory where you’ve stored the files for your project you can use *testthat* to automate testing of your functions
+
+* need devtools and “testthat” libraries
+* load_all() :runs everything in “R” subdirectory)
+* document() :creates documentation
+* test_dir(“name”) :runs all tests in the “name” subdirectory  (all files beginning with the word “test”
+* test_file(“name”): runs all  the tests in a file called “name”
+
+Testing in R uses expectation
+
+##Expectation
+
+* tests you can use to make sure your code is working the way you think it should be working
+* basically what you “expect” from your function given certain input parameters
+often used to test extreme or “bad” values or 0
+
+* expect_that(function, equals(value))
+* expect_that(function, is_identical_to(value))
+difference between equals and is_identical_to is that equals included a tolerance (really really small difference OK)
+* expect_that(function, matches(value))
+* expect_that(function, is_true())
+* expect_that(function, throws_error(string))
+You can also write your own
+
+Examples using surge_to_damage
+
+
+
+
+Function ![](examplecode.jpeg)
+
+
+
+test_that("surge_to_damage_works", {
+
+expect_that(surge_to_damage(surge=0,
+
+surge.min=900,base=40,K=20), 
+
+equals(0))
+})
+
+
+Multiple test ![](mfunc.jpeg)
+
+Multiple test in a file called “tests/test_surge_to_damage.R”
+To run all tests in a file, use test_file
+
+Make tests for each function
+To run all tests in a directory,use test_dir
+
+
+```{r testing, eval=FALSE}
+
+
+test_that("spring.summary.works" ,
+{clim.data = as.data.frame(cbind(month=c(1:4), day=rep(1, times=4), year=rep(1,times=4), 
+rain=rep(0, times=4), tmax=c(2,2,1,1), tmin=rep(0, times=4)))
+
+expect_that(spring.summary(clim.data, spring.months=4)$mean.springP, equals(0))
+expect_that(spring.summary(clim.data, spring.months=4)$mean.springT, equals(0.5))
+expect_that(spring.summary(clim.data, spring.months=1)$mean.springT, equals(1))
+expect_true(spring.summary(clim.data, spring.months=c(1:4))$coldest.spring > 2)
+})
+
+
+test_dir("tests")
+
+
