@@ -5,6 +5,18 @@ date: "May 25, 2017"
 output: html_document
 ---
 
+<style type="text/css">
+body, td {
+   font-size: 24px;
+}
+code.r{
+  font-size: 18px;
+}
+pre {
+  font-size: 18px
+}
+</style>
+
 ```{r setup, echo=FALSE, eval=FALSE}
 #make sure you have libraries
 library(dplyr)
@@ -39,19 +51,32 @@ from CRAN, but can be downloaded (or sent as a zip file) and loaded into R
 # <span style="color:orange">Why make packages</span>
 
 * to easily share functions and data with others with R-specific documentation
+
 * have a set of tools (functions) that you often use, that can be easily loaded
+
 * be part of the R community
 
 
 #  <span style="color:orange">Installing User Packages</span>
 * looks similar to CRAN packages
+
 * uncompiled (they can be compiled but not always) so  you can **see** the code
-* you can load my package *esm237examples* by 
-  * downloading *esm237examples_1.0.tar.gz *
+
+You can load my package *esm237examplesS18* by 
+
+  * downloading *esm237examplesS18.tar.gz *
+    * DON'T UNZIP
+  
   * install from a *package archive*
+  
+  
+  
   * *library(esm237examples)*
-  * to make sure it works, 
+  
+  * to make sure it works,try the following
+  
     *  *help(compute_NPV)*
+  
     *  *spring.summary* 
       * note that this shows you the code used to implement spring.summary
 
@@ -74,12 +99,18 @@ First lets review the format for writing functions
 ## Steps for starting a package
 
 * Think of a name for your package, it should be descriptive of the many related functions that you will store there
-      * mine will be **esm237examples**
+      * mine will be **esm237examplesS18**
 * Start a new project, using the same name for the project as your package name
     * choose the option in package creation to ** create a package **
+    * make sure that the **path** to this directory is not in the course directory, or other directory that is already under version control (git)
+    
 * If you already have an R function you can add it here
   * make sure your function is named **something.R** and follows the format for functions that we have been using 
+  * try adding one of the functions that you created to compute diversity
+  
 * Install libraries **devtools** and **roxygen2** from CRAN
+
+* Link with a git repository - see project set up
 
 
 You will notice that this creates a directory structure that looks something like this
@@ -97,11 +128,12 @@ This package (e.g **esm237examples**)  directory structures  store your code and
 * A data/ subdirectory of datasets.
 
 Inclass Exercise: Make a change to your R function, save it, then re-installusing either menu:
-  * *Build* - *Load All*
+  * *Build* - *Build and Reload*
   * *load_all()* command from command line
 
 This will Load your functions in your package that is under-development
 
+You can edit DESCRIPTION to add useful information particularly if you are going to share this package
 
 It is useful to keep an Rmarkdown file or R script that lets you run your function - this should be stored *outside* of the package directory
 
@@ -109,47 +141,9 @@ Here's an example
 
 
 
-```{r code for spring.summary.R, echo=FALSE}
+```{r code for spring_summary.R, echo=FALSE}
+spring_summary
 
-
-#' Summary information about spring climate
-#'
-#' computes summary information about spring temperature and precipitation
-#' @param clim.data  data frame with columns tmax, tmin (C)
-#'	rain (precip in mm), year, month (integer), day
-#' @param months (as integer) to include in spring; default 4,5,6
-#' @return returns a list containing, mean spring temperature (mean.springT, (C))
-#' year with lowest spring temperature (coldest.spring (year))
-#' mean spring precipitation (mean.springP (mm))
-#' spring (as year) with highest precip (wettest.spring (year))
-
-
-spring.summary = function(clim.data, spring.months = c(4:6), springout=FALSE) {
-  
-  spring = subset(clim.data, clim.data$month %in% spring.months)
-  springT = (spring$tmax+spring$tmin)/2.0
-  all.springT = aggregate(springT, by =list(spring$year), mean)
-  mean.springT = mean(c(spring$tmax, spring$tmin))
-  lowyear = spring$year[which.min(spring$tmin)]
-  spring.precip = as.data.frame(matrix(nrow=unique(spring$year), ncol=2))
-  colnames(spring.precip)=c("precip","year")
-  
-  spring.precip = aggregate(spring$rain, by=list(spring$year), sum)
-  
-  
-  colnames(spring.precip) = c("year","precip")  
-  mean.spring.precip = mean(spring.precip$precip)
-  wettest.spring = spring.precip$year[which.max(spring.precip$precip)]
-  
-  if (springout)
-  return(list(mean.springT = mean.springT, coldest.spring=lowyear, 
-              mean.springP=mean.spring.precip,wettest.spring=wettest.spring, 
-			all.springP = spring.precip, all.springT = all.springT ))
-  else
-    return(list(mean.springT = mean.springT, coldest.spring=lowyear, 
-                mean.springP=mean.spring.precip,wettest.spring=wettest.spring ))
-    
-}
 ```
 
 Use of spring.summary
@@ -159,20 +153,26 @@ Use of spring.summary
 # load "stuff" in your package including R
 load_all()
 #read in data
-clim=read.table("clim.txt", header=T)
+clim=read.table("../clim.txt", header=T)
 
 # run a function in the package
-result = spring.summary(clim)
+result = spring_summary(clim)
 result
 
 # notice
-help(spring.summary)
+help(spring_summary)
 
 ```
+
+Try this:
+   * create a Rmarkdown file that you will use for using functions in your package
+   * save it in a directory above where you are creating your package
+   * in the Rmarkdown, provide code to generate some sample data, save it and read it in and apply     your function
+  
 # <span style="color:orange">Documentation</span>
 
  
-* There is also a standard format for documentation that can be read by automatic programs (roxygen2) - an R package that generate “standard” R documentation - manual or help pages
+* There is a standard format for documentation that can be read by automatic programs (roxygen2) - an R package that generate “standard” R documentation - manual or help pages
 
 * These automated approaches for building documentation (like roxygen2) and meta data (descriptions of data sets) are increasingly common - so you should get into the practice of being structured in your approach to documentation
 
@@ -250,14 +250,14 @@ You can then refer to that dataset as an object in your workspace
 
 * save the data to the data subdirectory of your package using:
   * use_data(name, pkg="packagename")
-  * eg. *use_data(clim, pkg=esm237examples)*
+  * eg. *use_data(clim, pkg=esm237examplesS18)*
 
 * dataset will be stored as data/name.rda in your package
 
 ```{r storing data, echo=FALSE, eval=FALSE}
 
-clim=read.table("clim.txt", header=T)
-use_data(clim, pkg="esm237examples")
+clim=read.table("../clim.txt", header=T)
+use_data(clim, pkg="esm237examplesS18", overwrite=TRUE)
 data(clim)
 ```
 
@@ -285,6 +285,8 @@ save that file in the R subdirectory of your package
     * \\itemize - itemize allows you to describe the data (see example above)
 
   * end the file with the name of your dataset (in data directory) in quotes
+  
+  * set your working directory to your project directory 
   
   * once you've generated the documentation - run *document(dataname)* and try *help(dataname)* to test
   
@@ -380,7 +382,7 @@ To run all tests in a directory,use test_dir
 ```{r testing, eval=FALSE}
 
 
-test_that("spring.summary.works" ,
+test_that("spring_summary_works" ,
 {clim.data = as.data.frame(cbind(month=c(1:4), day=rep(1, times=4), year=rep(1,times=4), 
 rain=rep(0, times=4), tmax=c(2,2,1,1), tmin=rep(0, times=4)))
 
