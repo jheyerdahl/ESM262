@@ -141,7 +141,7 @@ Here's an example
 
 
 
-```{r code for spring_summary.R, echo=FALSE}
+```{r code for spring_summary.R, eval=FALSE, echo=FALSE}
 spring_summary
 
 ```
