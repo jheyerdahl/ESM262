@@ -10,13 +10,20 @@ spring_summary(clim_data, spring_months = c(4:6), springout = FALSE)
 \item{clim_data}{data frame with columns tmax, tmin (C)
 rain (precip in mm), year, month (integer), day}
 
+\item{springout}{(default FALSE) set to TRUE to output spring precip and temperature for all years}
+
 \item{months}{(as integer) to include in spring; default 4,5,6}
 }
 \value{
-returns a list containing, mean spring temperature (mean_springT, (C))
-year with lowest spring temperature (coldest_spring (year))
-mean spring precipitation (mean_springP (mm))
-spring (as year) with highest precip (wettest_spring (year))
+returns a list containing,
+\describe{
+ \item{mean_springT}{mean_springT mean spring temperature (C))}
+ \item{coldest_spring_yr}{ year with lowest spring temperature  (year))}
+ \item{coldest_springP}{  lowest spring temperature  (C))}
+ \item{mean_springP}{ mean spring precipitation  (mm))}
+ \item{wettest_spring_yr}{ spring (as year) with highest precip (year))}
+ \item{wettest_springP}{  highest precip (mm))}
+ }
 }
 \description{
 computes summary information about spring temperature and precipitation

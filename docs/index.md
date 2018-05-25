@@ -28,8 +28,8 @@ Fridays 08:30-11:30 AM in Bren 1424, **except**:
 ||27 Apr||**no class**|
 |4|04 May|JF|[databases](database)|
 |5|11 May|NT|[functions](functions)|
-|6|18 May|NT|[software engineering: functions & modules (cont'd)](functions)|
-|7|25 May|NT|[packages, testing, & documentation](packages)|
+|6|18 May|NT|[software engineering: functions & modules (cont'd)](morefunctions)|
+|7|25 May|NT|[packages, testing, & documentation]|
 |8|01 Jun|NT|[packages, testing, & documentation (cont'd)]|
 |9|08 Jun|JF|[geospatial data]|
 
@@ -40,3 +40,4 @@ Fridays 08:30-11:30 AM in Bren 1424, **except**:
 3. …stay tuned...
 
 Notify us on [GauchoSpace](https://purl.org/ucsb-bren/ESM262-GS) after you've pushed your assignment to your GitHub repository.
+tory.

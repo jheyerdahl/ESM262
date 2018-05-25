@@ -22,8 +22,7 @@
 clim
 }
 \description{
-Data from SB-LTER met station, daily meterologic data including temperature, precipitation
-soilar radiation and variables derived from RHESSys model estimats
+Data from SB-LTER meterology station
 }
 \author{
 Naomi

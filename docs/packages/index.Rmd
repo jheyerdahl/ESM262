@@ -77,7 +77,7 @@ You can load my package *esm237examplesS18* by
   
     *  *help(compute_NPV)*
   
-    *  *spring.summary* 
+    *  *spring_summary* 
       * note that this shows you the code used to implement spring.summary
 
 
@@ -290,9 +290,19 @@ save that file in the R subdirectory of your package
   
   * once you've generated the documentation - run *document(dataname)* and try *help(dataname)* to test
   
+
+
+
 Generate some data and store it with your package
 
 
+```{r usingdata, echo=FALSE, eval=FALSE}
+
+data(clim)
+help(clim)
+spring_summary(clim)
+
+```
 # <span style="color:orange">Giving the package to others</span>
 
 When you work on the defining the package you use the project of the same name
@@ -344,22 +354,75 @@ Testing in R uses expectation
 often used to test extreme or “bad” values or 0
 
 * expect_that(function, equals(value))
+
+```{r testingsimple, eval=FALSE}
+
+# runs a test on a statement and checks to see if it is correct
+# this one should work
+expect_that(2+2, equals(4))
+# this one should 'throw and error'
+expect_that(2+5, equals(4))
+
+# we can also use expect_true
+# works with variables two
+a = 200
+expect_that(a > 2, is_true() )
+a = 0
+expect_that(a > 2, is_true() )
+
+# because we use expect_that with variables and functions we can uses dynamically 
+# and test just to make sure we are using reasonable inputs
+futurevalue = 100
+expect_that(compute_NPV(value=futurevalue, time=10, discount=a) > 0, is_true())
+futurevalue = -100
+expect_that(compute_NPV(value=futurevalue, time=10, discount=a) > 0, is_true())
+
+# what if function returns a list
+help(spring_summary)
+data(clim)
+
+# to see if its working correctly we can make sure that coldest spring is at least as cold as mean
+expect_that(spring_summary(clim)$mean_springT >= spring_summary(clim)$coldest_springT, is_true())
+
+# check for reasonable values
+expect_that(spring_summary(clim)$mean_springT > -100, is_true())
+
+
+# generate dummy data for testing
+clim_fake = clim
+clim_fake$rain = 0
+clim_fake$tmin = 0
+
+expect_that(spring_summary(clim_fake)$coldest_springT ==0  &&
+              spring_summary(clim_fake)$wettest_springP == 0, is_true())
+
+# an example where it will fail
+clim_fake$tmin = -9999
+expect_that(spring_summary(clim_fake)$coldest_springT > -100, is_true())
+
+
+```
+Other tests
+
+
 * expect_that(function, is_identical_to(value))
 difference between equals and is_identical_to is that equals included a tolerance (really really small difference OK)
 * expect_that(function, matches(value))
 * expect_that(function, is_true())
 * expect_that(function, throws_error(string))
-You can also write your own
 
-Examples using surge_to_damage
 
+A **test** runs the expect that function and returns a message
 
 
 
 Function ![](examplecode.jpeg)
 
 
+```{r testing2, eval=FALSE}
 
+
+# lets do a simple test if surge is 0 we don't expect any damage
 test_that("surge_to_damage_works", {
 
 expect_that(surge_to_damage(surge=0,
@@ -369,6 +432,9 @@ surge.min=900,base=40,K=20),
 equals(0))
 })
 
+# why did it fail?
+```
+What we really want is to have tests that we **always** run, everytime we change something
 
 Multiple test ![](mfunc.jpeg)
 
@@ -381,18 +447,27 @@ To run all tests in a directory,use test_dir
 
 ```{r testing, eval=FALSE}
 
-
+#save this to a file called test_spring_summary
 test_that("spring_summary_works" ,
-{clim.data = as.data.frame(cbind(month=c(1:4), day=rep(1, times=4), year=rep(1,times=4), 
+{clim_data = as.data.frame(cbind(month=c(1:4), day=rep(1, times=4), year=rep(1,times=4), 
 rain=rep(0, times=4), tmax=c(2,2,1,1), tmin=rep(0, times=4)))
 
-expect_that(spring.summary(clim.data, spring.months=4)$mean.springP, equals(0))
-expect_that(spring.summary(clim.data, spring.months=4)$mean.springT, equals(0.5))
-expect_that(spring.summary(clim.data, spring.months=1)$mean.springT, equals(1))
-expect_true(spring.summary(clim.data, spring.months=c(1:4))$coldest.spring > 2)
+expect_that(spring_summary(clim_data, spring_months=4)$mean_springP, equals(0))
+expect_that(spring_summary(clim_data, spring_months=4)$mean_springT, equals(0.5))
+expect_that(spring_summary(clim_data, spring_months=1)$mean_springT, equals(1))
+expect_true(spring_summary(clim_data, spring_months=c(1:4))$coldest_spring > 2)
 })
 
+# look at test_surge_to_damage
+# to run the tests
 
-test_dir("tests")
+test_file("tests/test_spring_summary.R")
+
+test_file("tests/test_surge_to_damage.R")
+# this is not so useful as we don't know which test failed
+test_file("tests/test_surge_to_damage.R", reporter="tap")
+
+# do all tests in a directory
+test_dir("tests", reporter="tap")
 
 

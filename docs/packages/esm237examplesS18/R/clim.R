@@ -1,7 +1,7 @@
 #' Climate Data from Santa Barbara
 #'
-#' Data from SB-LTER met station, daily meterologic data including temperature, precipitation
-#' soilar radiation and variables derived from RHESSys model estimats
+#' Data from SB-LTER meterology station
+#'
 #' @format A data frame with 27274 rows and 8 colums
 #' \itemize{
 #' \item date day/month/year
