@@ -36,6 +36,8 @@ Fridays 08:30-11:30 AM in Bren 1424, **except**:
 ### Assignments
 
 1. [Data Wrangling](wrangle/asst_wrangle.html)
+    - [rubric](wrangle/rubric.md)
+    - [solution](wrangle/solution.nb.html)
 2. [Database](database/asst_database.html)
 3. …stay tuned...
 
