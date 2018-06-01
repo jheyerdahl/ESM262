@@ -120,7 +120,7 @@ R Package Directory ![](Rdirstruct.jpeg)
 You R function will be stored in the **R** subdirectory
 IF **man** and **data**, **tests** subdirectories are not created - created them
 
-This package (e.g **esm237examples**)  directory structures  store your code and documentation; that is easy for R to read. It include
+This package (e.g **esm237examplesS18**)  directory structures  store your code and documentation; that is easy for R to read. It include
 
 * A file DESCRIPTION with descriptions of the package, author, and license conditions
 * A man/ subdirectory of documentation files.

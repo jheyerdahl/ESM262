@@ -1,0 +1,2 @@
+source("/Users/christina/Google Drive/env.modelling/mangrove/R/parameter.R")
+load("/Users/christina/Google Drive/env.modelling/mangrove/curr.RData")

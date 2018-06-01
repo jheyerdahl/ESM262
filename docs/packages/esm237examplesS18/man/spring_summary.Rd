@@ -17,12 +17,12 @@ rain (precip in mm), year, month (integer), day}
 \value{
 returns a list containing,
 \describe{
- \item{mean_springT}{mean_springT mean spring temperature (C))}
- \item{coldest_spring_yr}{ year with lowest spring temperature  (year))}
- \item{coldest_springP}{  lowest spring temperature  (C))}
- \item{mean_springP}{ mean spring precipitation  (mm))}
- \item{wettest_spring_yr}{ spring (as year) with highest precip (year))}
- \item{wettest_springP}{  highest precip (mm))}
+ \item{mean_springT}{mean_springT mean spring temperature (C)}
+ \item{coldest_spring_yr}{ year with lowest spring temperature  (year)}
+ \item{coldest_springT}{  lowest spring temperature  (C)}
+ \item{mean_springP}{ mean spring precipitation  (mm)}
+ \item{wettest_spring_yr}{ spring (as year) with highest precip (year)}
+ \item{wettest_springP}{  highest precip (mm)}
  }
 }
 \description{

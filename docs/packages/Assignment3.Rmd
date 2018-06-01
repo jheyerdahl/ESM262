@@ -1,0 +1,79 @@
+---
+title: "Assignment3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(devtools)
+library(roxygen2)
+```
+
+## Instructions
+
+*a table that has prices for different fish
+* a table that has the number caught for each fish
+species for each location
+* each location is in a different column
+* each fish is in a different row 
+
+Function output will be
+
+* most frequently caught fish in each location
+* total revenue for each location
+* total fisheries revenue sum
+
+* if user requests it graph of revenue by location and total revenue (as text)
+
+## Function definition and example data, where you generate the data yourself
+
+Note that I'm showing here but should be stored in a *.R file
+And then generate data
+
+```{r fdefin}
+
+
+
+# create a list of possible fish to sample from
+possible_fish = c("squid","cod","lobster","salmon","caplin")
+
+# generate typical prices for each possible fish
+prices = data.frame(fish=possible_fish, price=c(2,3,10,5,1))
+
+locs = c("SB","LA","PS","SB2","LA2")
+example_catch = matrix(nrow=length(possible_fish), ncol=length(locs) )
+colnames(example_catch)=locs
+rownames(example_catch)=possible_fish
+
+# lets simulate different productivities or typical size of catch in this area
+locs = data.frame(name=locs, size = c(1000,1000.5000,2000,3000,500))
+
+# and different relative population size for fish
+
+
+for ( i in 1: length(possible_fish)) {
+  for (j in 1:nrow(locs)) {
+      example_catch[i,j] =  round(rnorm(mean=locs$size[j], sd=0.1*locs$size[j], n=1))
+  }
+}
+  
+# run function
+fisheries_summary(catches=example_catch, prices=prices, plot=FALSE)
+
+# try with a plot
+fisheries_summary(catches=example_catch, prices=prices, plot=TRUE)
+
+
+
+```
+
+
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
