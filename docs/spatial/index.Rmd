@@ -12,9 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ## Working with spatial data
 
-([NEON Data Skills - R Tutorials](http://neondataskills.org/R/))
+(from [NEON Data Skills - R Tutorials](http://neondataskills.org/R/))
 
 ## Raster Data
+
+[NEON Teaching Data Subset: Airborne Remote Sensing Data](https://frew.eri.ucsb.edu/private/ESM262/NEONDSAirborneRemoteSensing.zip)
 
 - [**Raster 00: Intro to Raster Data**](http://neondataskills.org/R/Introduction-to-Raster-Data-In-R/)
 - [**Raster 03: Raster Calculations**](http://neondataskills.org/R/Raster-Calculations-In-R/)
@@ -22,6 +24,8 @@ knitr::opts_chunk$set(echo = TRUE)
     - sample [Landsat image](Landsat7.tif) for [NDVI](https://earthobservatory.nasa.gov/Features/MeasuringVegetation/) calculation
 
 ## Vector Data
+
+[NEON Teaching Data Subset: Site Layout Shapefiles](https://frew.eri.ucsb.edu/private/ESM262/NEONDSSiteLayoutFiles.zip)
 
 - [**Vector 00: Open and Plot Shapefiles**](http://neondataskills.org/R/open-shapefiles-in-R/)
 - [**Vector 01: Explore Shapefile Attributes**](http://neondataskills.org/R/shapefile-attributes-in-R/)
