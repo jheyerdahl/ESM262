@@ -1,0 +1,33 @@
+---
+title: "Spatial R"
+author: "ESM 262 / Frew"
+date: "Spring 2018"
+output:
+  html_document: default
+  slidy_presentation: default
+  ioslides_presentation: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Working with spatial data
+
+([NEON Data Skills - R Tutorials](http://neondataskills.org/R/))
+
+## Raster Data
+
+- [**Raster 00: Intro to Raster Data**](http://neondataskills.org/R/Introduction-to-Raster-Data-In-R/)
+- [**Raster 03: Raster Calculations**](http://neondataskills.org/R/Raster-Calculations-In-R/)
+- [**Raster 04: Work With Multi-Band Rasters**](http://neondataskills.org/R/Multi-Band-Rasters-In-R/)
+    - sample [Landsat image](Landsat7.tif) for [NDVI](https://earthobservatory.nasa.gov/Features/MeasuringVegetation/) calculation
+
+## Vector Data
+
+- [**Vector 00: Open and Plot Shapefiles**](http://neondataskills.org/R/open-shapefiles-in-R/)
+- [**Vector 01: Explore Shapefile Attributes**](http://neondataskills.org/R/shapefile-attributes-in-R/)
+- [**Vector 04: Convert from `.csv` to a Shapefile**](http://neondataskills.org/R/csv-to-shapefile-R/)
+    - sample [California gazetteer data](CA.csv) (from assignment 2)
+
+## Displaying spatial data
+
+- [Leaflet for R](https://rstudio.github.io/leaflet)
